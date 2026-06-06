@@ -9,16 +9,20 @@ bcrypt = Bcrypt(app)
 
 app.secret_key = 'super_secret_secure_watch_key_group_5'
 
-database_url = os.environ.get('DATABASE_URL')
-if database_url and database_url.startswith("postgres://"):
-    database_url = database_url.replace("postgres://", "postgresql://", 1)
+if os.environ.get('DATABASE_URL'):
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:group5@localhost:5432/watchmewhip'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'postgresql://postgres:group5@localhost:5432/watchmewhip'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     "pool_recycle": 299,
     "pool_pre_ping": True
 }
+
 db = SQLAlchemy(app)
 
 class User(db.Model):
