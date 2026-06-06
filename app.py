@@ -20,7 +20,6 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     "pool_pre_ping": True
 }
 db = SQLAlchemy(app)
-db = SQLAlchemy(app)
 
 class User(db.Model):
     __tablename__ = 'users'
