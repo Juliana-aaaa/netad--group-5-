@@ -246,13 +246,24 @@ async function startCamera() {
   try {
     const authCheck = await fetch('/api/stream/verify');
     if (authCheck.status !== 200) {
-      console.error('Backend streaming access blocked.');
+      showCameraOffline();
       return;
     }
+
     const img = document.getElementById('camFeed');
     img.src = '/video_feed';
+
+    // If no response within 8 seconds, show offline
+    const timeout = setTimeout(() => {
+      if (!img.complete || img.naturalWidth === 0) {
+        showCameraOffline();
+      }
+    }, 8000);
+
+    img.onload = () => clearTimeout(timeout);
+
   } catch (err) {
-    console.error('Camera initialization failed:', err.name, err.message);
+    showCameraOffline();
   }
 }
 
