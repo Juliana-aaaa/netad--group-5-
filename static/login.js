@@ -178,6 +178,8 @@ form.addEventListener('submit', async (e) => {
 });
 
 async function handleLogout() {
+  clearInterval(sessionInterval);
+document.getElementById('sessionTimer').textContent = 'Session: 00:00:00';
   const dt = getFormattedDateTime();
   const network = await fetchRealNetworkContext();
 
