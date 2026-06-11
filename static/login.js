@@ -14,6 +14,12 @@ const logoutBtn2 = document.getElementById('logoutBtn2');
 
 let currentLogId = null;
 
+function showCameraOffline() {
+  document.getElementById('camFeed').style.display = 'none';
+  const offline = document.getElementById('cameraOffline');
+  offline.style.display = 'flex';
+}
+
 function getFormattedDateTime() {
   const now = new Date();
   let hours = now.getHours();
