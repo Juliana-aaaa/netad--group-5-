@@ -145,8 +145,7 @@ form.addEventListener('submit', async (e) => {
       loginCard.style.display = 'none';
       dashboard.classList.add('show');
       startCamera();
-      
-      startSessionTimer();
+  
     } else {
       // Show intrusion attempt in the log list
       const deviceInfo = resData.user_agent || navigator.userAgent;
