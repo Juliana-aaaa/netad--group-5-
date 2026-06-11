@@ -14,10 +14,6 @@ const logoutBtn2 = document.getElementById('logoutBtn2');
 
 let currentLogId = null;
 
-function showCameraOffline() {
-  document.getElementById('camFeed').style.display = 'none';
-}
-
 function getFormattedDateTime() {
   const now = new Date();
   let hours = now.getHours();
@@ -149,7 +145,6 @@ form.addEventListener('submit', async (e) => {
       loginCard.style.display = 'none';
       dashboard.classList.add('show');
       startCamera();
-  
     } else {
       // Show intrusion attempt in the log list
       const deviceInfo = resData.user_agent || navigator.userAgent;
@@ -249,23 +244,6 @@ async function startCamera() {
     img.src = '/video_feed';
   } catch (err) {
     console.error('Camera initialization failed:', err.name, err.message);
-  }
-}
-
-    const img = document.getElementById('camFeed');
-    img.src = '/video_feed';
-
-    // If no response within 8 seconds, show offline
-    const timeout = setTimeout(() => {
-      if (!img.complete || img.naturalWidth === 0) {
-        showCameraOffline();
-      }
-    }, 8000);
-
-    img.onload = () => clearTimeout(timeout);
-
-  } catch (err) {
-    showCameraOffline();
   }
 }
 
