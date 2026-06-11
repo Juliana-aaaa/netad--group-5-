@@ -14,6 +14,12 @@ const logoutBtn2 = document.getElementById('logoutBtn2');
 
 let currentLogId = null;
 
+function showCameraOffline() {
+  document.getElementById('camFeed').style.display = 'none';
+  const offline = document.getElementById('cameraOffline');
+  offline.style.display = 'flex';
+}
+
 function getFormattedDateTime() {
   const now = new Date();
   let hours = now.getHours();
@@ -237,13 +243,24 @@ async function startCamera() {
   try {
     const authCheck = await fetch('/api/stream/verify');
     if (authCheck.status !== 200) {
-      console.error('Backend streaming access blocked.');
+      showCameraOffline();
       return;
     }
     const img = document.getElementById('camFeed');
+    img.style.display = '';
+    document.getElementById('cameraOffline').style.display = 'none';
     img.src = '/video_feed';
+
+    const timeout = setTimeout(() => {
+      if (!img.complete || img.naturalWidth === 0) {
+        showCameraOffline();
+      }
+    }, 8000);
+
+    img.onload = () => clearTimeout(timeout);
+
   } catch (err) {
-    console.error('Camera initialization failed:', err.name, err.message);
+    showCameraOffline();
   }
 }
 
