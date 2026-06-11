@@ -314,16 +314,3 @@ async function renderLogs(isManualClick = false) {
     console.error('Log fetch error:', err);
   }
 }
-
-let sessionInterval;
-
-function startSessionTimer() {
-  let seconds = 0;
-  sessionInterval = setInterval(() => {
-    seconds++;
-    const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
-    const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
-    const s = String(seconds % 60).padStart(2, '0');
-    document.getElementById('sessionTimer').textContent = `Session: ${h}:${m}:${s}`;
-  }, 1000);
-}
