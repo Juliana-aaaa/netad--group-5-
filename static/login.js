@@ -13,6 +13,8 @@ const logsTableBody = document.getElementById('logsTableBody');
 const logoutBtn2 = document.getElementById('logoutBtn2');
 
 let currentLogId = null;
+let failedAttempts = 0;
+let lockoutTimer = null;
 
 function showCameraOffline() {
   document.getElementById('camFeed').style.display = 'none';
@@ -108,6 +110,9 @@ function isValidEmail(val) {
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
+
+  if (lockoutTimer) return;
+
   let valid = true;
 
   if (!isValidEmail(emailInput.value)) {
@@ -173,6 +178,11 @@ form.addEventListener('submit', async (e) => {
       emailError.classList.add('show');
       loginBtn.classList.remove('loading');
       loginBtn.disabled = false;
+
+      failedAttempts++;
+      if (failedAttempts >= 5) {
+        startLockout();
+      }
     }
   } catch (err) {
     console.error('Authentication transmission failed:', err);
@@ -180,6 +190,31 @@ form.addEventListener('submit', async (e) => {
     loginBtn.disabled = false;
   }
 });
+
+function startLockout() {
+  let seconds = 30;
+  loginBtn.disabled = true;
+  loginBtn.classList.remove('loading');
+  emailInput.disabled = true;
+  passwordInput.disabled = true;
+  emailError.textContent = `Too many attempts. Wait ${seconds}s to try again.`;
+  emailError.classList.add('show');
+
+  lockoutTimer = setInterval(() => {
+    seconds--;
+    emailError.textContent = `Too many attempts. Wait ${seconds}s to try again.`;
+    if (seconds <= 0) {
+      clearInterval(lockoutTimer);
+      lockoutTimer = null;
+      failedAttempts = 0;
+      loginBtn.disabled = false;
+      emailInput.disabled = false;
+      passwordInput.disabled = false;
+      emailError.textContent = 'You can try again now.';
+      setTimeout(() => emailError.classList.remove('show'), 2000);
+    }
+  }, 1000);
+}
 
 async function handleLogout() {
   const dt = getFormattedDateTime();
@@ -196,6 +231,7 @@ async function handleLogout() {
   }
 
   currentLogId = null;
+  failedAttempts = 0;
   logsPage.classList.remove('show');
   dashboard.classList.remove('show');
   loginCard.style.display = '';
