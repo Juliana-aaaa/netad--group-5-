@@ -334,6 +334,34 @@ function showDashboard() {
   trackUserAction("Returned to Camera Feed");
 }
 
+async function exportCSV() {
+  try {
+    const dt = getFormattedDateTime();
+    const response = await fetch(`/api/logs?time=${encodeURIComponent(dt.time)}&date=${encodeURIComponent(dt.date)}&manual=false&initial=true`);
+    const logs = await response.json();
+    if (!Array.isArray(logs) || logs.length === 0) {
+      alert('No logs to export.');
+      return;
+    }
+    const headers = ['User/Admin', 'Time In', 'Time Out', 'Date', 'IP Address', 'Action'];
+    const rows = logs.map(log => [
+      log.user, log.timeIn, log.timeOut || '—', log.date, log.ip || '—', log.action || '—'
+    ]);
+    const csvContent = [headers, ...rows]
+      .map(row => row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `monitoring-logs-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error('Export failed:', err);
+  }
+}
+
 async function renderLogs(isManualClick = false) {
   try {
     const dt = getFormattedDateTime();
