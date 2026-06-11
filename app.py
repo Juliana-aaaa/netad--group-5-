@@ -7,7 +7,7 @@ import cv2
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
-app.secret_key = 'super_secret_secure_watch_key_group_5'
+app.secret_key = os.environ.get('SECRET_KEY', 'fallback-key')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://postgres:group5@localhost:5432/watchmewhip')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
